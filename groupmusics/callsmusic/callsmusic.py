@@ -1,7 +1,7 @@
 from pyrogram import Client
 from pytgcalls import PyTgCalls
 
-import config
+from .. import config
 from . import queues
 
 client = Client(config.SESSION_NAME, config.API_ID, config.API_HASH)
@@ -14,6 +14,7 @@ def on_stream_end(chat_id: int) -> None:
 
     if queues.is_empty(chat_id):
         pytgcalls.leave_group_call(chat_id)
+        client.leave_chat(chat_id)
     else:
         pytgcalls.change_stream(
             chat_id, queues.get(chat_id)["file"]

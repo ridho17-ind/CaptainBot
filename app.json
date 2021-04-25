@@ -5,19 +5,6 @@
   "repository": "https://github.com/ImJanindu/GroupMusicBot",
   "stack": "container",
   "env": {
-    "SESSION_NAME": {
-      "description": "Pyrogram session string",
-      "required": true
-    },
-    "BOT_TOKEN": {
-      "description": "A bot token from @BotFather",
-      "required": true
-    },
-    "BOT_NAME": {
-      "description": "Your MusicPlayer Bot Name.",
-      "required": false,
-      "value": ""
-    },
     "API_ID": {
       "description": "App ID from my.telegram.org/apps",
       "required": true
@@ -25,6 +12,49 @@
     "API_HASH": {
       "description": "App hash from my.telegram.org/apps",
       "required": true
+    },
+    "SESSION_NAME": {
+      "description": "Pyrogram session string",
+      "required": true
+    },
+    "USERBOT_USERNAME": {
+      "description": "Your Userbot Username",
+      "required": true,
+      "value": ""
+    },
+    "BOT_TOKEN": {
+      "description": "A bot token from @BotFather",
+      "required": true
+    },
+    "BOT_NAME": {
+      "description": "Your MusicPlayer Bot Name.",
+      "required": true,
+      "value": ""
+    },
+    "BOT_USERNAME": {
+      "description": "Your Bot Username",
+      "required": true,
+      "value": ""
+    },
+    "DEV_NAME": {
+      "description": "Your Username",
+      "required": true,
+      "value": ""
+    },
+    "DEV_ID": {
+      "description": "Your ID",
+      "required": true,
+      "value": ""
+    },
+    "STICKER_ID": {
+      "description": "ID of your sticker, use @idstickerbot to get it",
+      "required": false,
+      "value": "CAACAgUAAxkBAAECNWNgf6-q6IDgxalULC64AAFosGxudMUAAsICAAKU_plXKCPliHlquSofBA"
+    },
+    "GROUP_URI": {
+      "description": "Your Group URL",
+      "required": true,
+      "value": ""
     },
     "SUDO_USERS": {
       "description": "List of user IDs counted as admin everywhere (separated by space).",

@@ -2,8 +2,8 @@ from os import path
 
 from youtube_dl import YoutubeDL
 
-from config import BOT_NAME as bn, DURATION_LIMIT
-from helpers.errors import DurationLimitError
+from ..config import DURATION_LIMIT
+from ..helpers.errors import DurationLimitError
 
 ydl_opts = {
     "format": "bestaudio/best",
@@ -20,7 +20,8 @@ def download(url: str) -> str:
 
     if duration > DURATION_LIMIT:
         raise DurationLimitError(
-            f"❌ Videos longer than {DURATION_LIMIT} minute(s) aren't allowed, the provided video is {duration} minute(s)"
+            f"❌ Video yang durasinya lebih dari {DURATION_LIMIT} menit tidak diperbolehkan, durasi yang diperbolehkan "
+            f"adalah {duration} menit "
         )
 
     ydl.download([url])
