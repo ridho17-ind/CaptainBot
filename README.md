@@ -1,3 +1,5 @@
+[![Code Grade](https://www.code-inspector.com/project/21896/status/svg)]
+
 <h2 align="centre">Captain Music Bot 🎵</h2>
 
 <p align="center">
