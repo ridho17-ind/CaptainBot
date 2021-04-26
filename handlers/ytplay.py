@@ -30,33 +30,6 @@ from helpers.functions import changeImageSize
 from config import que
 
 
-@Client.on_callback_query(filters.regex(pattern=r'^(playlist)$'))
-async def plylist_callback(_, cb):
-    type_ = cb.matches[0].group(1)
-    if type_ == "playlist":
-        queue = que.get(cb.message.chat.id)
-        if not queue:
-            await cb.message.edit("Bot bisa digunakan")
-        temp = []
-        for t in queue:
-            temp.append(t)
-        now_playing = temp[0][0]
-        by = temp[0][1].mention(style="md")
-        msg = f"**Sedang Diputar** di {cb.message.chat.title}"
-        msg += f"\n- {now_playing}"
-        msg += f"\n- Atas Permintaan {by}"
-        temp.pop(0)
-        if temp:
-            msg += "\n\n"
-            msg += "**Dalam Antrian**"
-            for song in temp:
-                name = song[0]
-                usr = song[1].mention(style="md")
-                msg += f"\n- {name}"
-                msg += f"\n- Atas Permintaan{usr}"
-        await cb.message.edit(msg)
-
-
 async def generate_cover(requested_by, title, duration, thumbnail, message: Message):
     """
     Function to create new edited cover from original youtube video cover
@@ -92,6 +65,34 @@ async def generate_cover(requested_by, title, duration, thumbnail, message: Mess
     img.save("final.png")
     os.remove("temp.png")
     os.remove("background.png")
+
+
+@Client.on_callback_query(filters.regex(pattern=r'^(playlist)$'))
+async def plylist_callback(_, cb):
+    global que
+    type_ = cb.matches[0].group(1)
+    if type_ == "playlist":
+        queue = que.get(cb.message.chat.id)
+        if not queue:
+            await cb.message.edit("Bot bisa digunakan")
+        temp = []
+        for t in queue:
+            temp.append(t)
+        now_playing = temp[0][0]
+        by = temp[0][1].mention(style="md")
+        msg = f"**Sedang Diputar** di {cb.message.chat.title}"
+        msg += f"\n- {now_playing}"
+        msg += f"\n- Atas Permintaan {by}"
+        temp.pop(0)
+        if temp:
+            msg += "\n\n"
+            msg += "**Dalam Antrian**"
+            for song in temp:
+                name = song[0]
+                usr = song[1].mention(style="md")
+                msg += f"\n- {name}"
+                msg += f"\n- Atas Permintaan{usr}"
+        await cb.message.edit(msg)
 
 
 def updated_stats(chat, queue, vol=100):
@@ -139,6 +140,7 @@ def ply_typ(type_):
 @Client.on_callback_query(filters.regex(pattern=r'^(play|pause|skip|leave|pus|resume|menu|cls)$'))
 @cb_admin_check
 async def othr_callback(_, cb):
+    global que
     queue = que.get(cb.message.chat.id)
     type_ = cb.matches[0].group(1)
     chat_id = cb.message.chat.id
@@ -265,6 +267,7 @@ async def othr_callback(_, cb):
 @errors
 async def play(_, message: Message):
     global file_path
+    global que
     lel = await message.reply("🔄 **Memprosses** ...")
     admins = await get_administrators(message.chat)
     print(admins)
@@ -285,7 +288,7 @@ async def play(_, message: Message):
             except Exception as e:
                 print(e)
     try:
-        chatdetails = await user.get_chat(chat_id)
+        await user.get_chat(chat_id)
     except:
         await lel.edit("__Bot helper tidak ada didalam grup, minta admin untuk mengirim perintah /play pada pertama "
                        "kali atau tambahkan bot secara manual__")
@@ -376,6 +379,7 @@ async def play(_, message: Message):
 
 @Client.on_message(command("current") & other_filters)
 async def currents(_, message: Message):
+    global que
     queuess = que.get(message.chat.id)
     stats = updated_stats(message.chat, queuess)
     if stats:
@@ -386,6 +390,7 @@ async def currents(_, message: Message):
 
 @Client.on_message(command("playlist") & other_filters)
 async def playlists(_, message: Message):
+    global que
     queue = que.get(message.chat.id)
     if not queue:
         await message.reply("Bot musik tersedia")
@@ -424,4 +429,3 @@ async def player(_, message: Message):
             await message.reply(stats, reply_markup=ply_typ("play"))
     else:
         await message.reply("Tidak ada Obrolan suara yang berjalan disini")
-
