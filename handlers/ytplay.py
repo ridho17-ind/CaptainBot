@@ -367,6 +367,7 @@ async def play(_, message: Message):
         open(thumb_name, 'wb').write(thumb.content)
 
         duration = results[0]["duration"]
+        views = results[0]["views"]
 
     except Exception as e:
         await lel.edit(
@@ -376,7 +377,7 @@ async def play(_, message: Message):
         return
 
     await lel.edit("__**Memproses Thumbnail...**__")
-    await generate_cover(requested_by, title, duration, thumbnail, chat_title)
+    await generate_cover(requested_by, title, views, duration, thumbnail)
 
     keyboard = InlineKeyboardMarkup(
         [
