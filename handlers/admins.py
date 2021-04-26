@@ -9,6 +9,8 @@ from callsmusic.callsmusic import client as user
 from helpers.filters import command, other_filters
 from helpers.decorators import errors, authorized_users_only, admin_only
 
+from cache.admins import set
+
 
 @Client.on_message(command("pause") & other_filters)
 @errors
@@ -98,6 +100,7 @@ async def invtochnl(client: Client, message: Message):
 
     try:
         await user.join_chat(invitelink)
+        await message.reply("`Userbot masuk kedalam grup.`")
     except UserAlreadyParticipant:
         await message.reply("`Userbot sudah berada didalam grup.`")
     except Exception as e:
@@ -107,4 +110,4 @@ async def invtochnl(client: Client, message: Message):
             f"\n\nAtau tambahkan @CaptMusic secara manual kedalam grup anda.**"
         )
         return
-    await message.reply("`Userbot masuk kedalam grup.`")
+

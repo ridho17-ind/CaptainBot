@@ -15,14 +15,14 @@ from config import STICKER_ID as SID
 from helpers.filters import other_filters2, other_filters
 
 
-@Client.on_message(filters.command("start") & other_filters2)
+@Client.on_message(filters.command("start") & ~filters.group & other_filters2)
 async def start(_, message: Message):
     await message.reply_sticker(SID)
     await message.reply_text(
         f"""Haiii {message.from_user.first_name} Saya **{BN}** 🎵\n\n
-        Saya bisa memutar musik di obrolan suara grup anda. Saya dikembangkan oleh [{DNAME}](tg://user?id={str(DID)}).\n
-        Tambahkan [Assistant](https://t.me/{USUN}) dan [Bot](https://t.me/{BUN}) 
-        kedalam grup Anda, dan nikmati mendengar musik dengan bebas!
+Saya bisa memutar musik di obrolan suara grup anda. Saya dikembangkan oleh [{DNAME}](tg://user?id={str(DID)}).\n
+Tambahkan [Assistant](https://t.me/{USUN}) dan [Bot](https://t.me/{BUN}) 
+kedalam grup Anda, dan nikmati mendengar musik dengan bebas!
         """,
         reply_markup=InlineKeyboardMarkup(
             [

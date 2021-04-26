@@ -299,6 +299,7 @@ async def play(_, message: Message):
     query = ''
     for i in message.command[1:]:
         query += ' ' + str(i)
+    print(query)
     await lel.edit("🎵 **Memproses Lagu**...")
     try:
         results = YoutubeSearch(query, max_results=1).to_dict()
