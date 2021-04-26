@@ -41,7 +41,7 @@ async def generate_cover(requested_by, title, duration, thumbnail, message: Mess
                 await f.close()
 
     image1 = Image.open("./background.png")
-    image2 = Image.open("../etc/foreground.png")
+    image2 = Image.open("etc/foreground.png")
     image3 = changeImageSize(1280, 720, image1)
     image4 = changeImageSize(1280, 720, image2)
     image5 = image3.convert("RGBA")
@@ -49,7 +49,7 @@ async def generate_cover(requested_by, title, duration, thumbnail, message: Mess
     Image.alpha_composite(image5, image6).save("temp.png")
     img = Image.open("temp.png")
     draw = ImageDraw.Draw(img)
-    font = ImageFont.truetype("../etc/font.otf", 32)
+    font = ImageFont.truetype("etc/font.otf", 32)
     draw.text((190, 550), f"Judul: {title}", (255, 255, 255), font=font)
     draw.text(
         (190, 590), f"Durasi: {duration}", (255, 255, 255), font=font
