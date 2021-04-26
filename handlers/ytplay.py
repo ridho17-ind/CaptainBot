@@ -27,6 +27,34 @@ from helpers.admins import get_administrators
 from helpers.filters import command, other_filters
 from helpers.decorators import errors, authorized_users_only, cb_admin_check
 from helpers.functions import changeImageSize
+from config import que
+
+
+@Client.on_callback_query(filters.regex(pattern=r'^(playlist)$'))
+async def plylist_callback(_, cb):
+    type_ = cb.matches[0].group(1)
+    if type_ == "playlist":
+        queue = que.get(cb.message.chat.id)
+        if not queue:
+            await cb.message.edit("Bot bisa digunakan")
+        temp = []
+        for t in queue:
+            temp.append(t)
+        now_playing = temp[0][0]
+        by = temp[0][1].mention(style="md")
+        msg = f"**Sedang Diputar** di {cb.message.chat.title}"
+        msg += f"\n- {now_playing}"
+        msg += f"\n- Atas Permintaan {by}"
+        temp.pop(0)
+        if temp:
+            msg += "\n\n"
+            msg += "**Dalam Antrian**"
+            for song in temp:
+                name = song[0]
+                usr = song[1].mention(style="md")
+                msg += f"\n- {name}"
+                msg += f"\n- Atas Permintaan{usr}"
+        await cb.message.edit(msg)
 
 
 async def generate_cover(requested_by, title, duration, thumbnail, message: Message):
@@ -40,6 +68,7 @@ async def generate_cover(requested_by, title, duration, thumbnail, message: Mess
                 await f.write(await resp.read())
                 await f.close()
 
+    chat_title = message.chat.title
     image1 = Image.open("./background.png")
     image2 = Image.open("etc/foreground.png")
     image3 = changeImageSize(1280, 720, image1)
@@ -54,7 +83,7 @@ async def generate_cover(requested_by, title, duration, thumbnail, message: Mess
     draw.text(
         (190, 590), f"Durasi: {duration}", (255, 255, 255), font=font
     )
-    draw.text((190, 630), f"Diputar Di: {message.chat.title[:20]}...", (255, 255, 255), font=font)
+    draw.text((190, 630), f"Diputar Di: {chat_title[:20]}...", (255, 255, 255), font=font)
     draw.text((190, 670),
               f"Atas Permintaan: {requested_by}",
               (255, 255, 255),
@@ -107,38 +136,9 @@ def ply_typ(type_):
     return mar
 
 
-@Client.on_callback_query(filters.regex(pattern=r'^(playlist)$'))
-async def plylist_callback(_, cb):
-    global que
-    type_ = cb.matches[0].group(1)
-    if type_ == "playlist":
-        queue = que.get(cb.message.chat.id)
-        if not queue:
-            await cb.message.edit("Bot bisa digunakan")
-        temp = []
-        for t in queue:
-            temp.append(t)
-        now_playing = temp[0][0]
-        by = temp[0][1].mention(style="md")
-        msg = f"**Sedang Diputar** di {cb.message.chat.title}"
-        msg += f"\n- {now_playing}"
-        msg += f"\n- Atas Permintaan {by}"
-        temp.pop(0)
-        if temp:
-            msg += "\n\n"
-            msg += "**Dalam Antrian**"
-            for song in temp:
-                name = song[0]
-                usr = song[1].mention(style="md")
-                msg += f"\n- {name}"
-                msg += f"\n- Atas Permintaan{usr}"
-        await cb.message.edit(msg)
-
-
 @Client.on_callback_query(filters.regex(pattern=r'^(play|pause|skip|leave|pus|resume|menu|cls)$'))
 @cb_admin_check
 async def othr_callback(_, cb):
-    global que
     queue = que.get(cb.message.chat.id)
     type_ = cb.matches[0].group(1)
     chat_id = cb.message.chat.id
@@ -265,15 +265,15 @@ async def othr_callback(_, cb):
 @errors
 async def play(_, message: Message):
     global file_path
-    global que
     lel = await message.reply("🔄 **Memprosses** ...")
     admins = await get_administrators(message.chat)
+    print(admins)
     chat_id = message.chat.id
 
     for admin in admins:
         if admin == message.from_user.id:
             try:
-                invite_link = await _.create_chat_invite_link(chat_id, member_limit=1)
+                invite_link = await _.export_chat_invite_link(chat_id)
             except:
                 await lel.edit("**Tambahkan saya sebagai admin terlebih dahulu.**")
                 return
@@ -283,7 +283,7 @@ async def play(_, message: Message):
             except UserAlreadyParticipant:
                 pass
             except Exception as e:
-                pass
+                print(e)
     try:
         chatdetails = await user.get_chat(chat_id)
     except:
@@ -318,6 +318,7 @@ async def play(_, message: Message):
         )
         print(str(e))
         return
+
     await lel.edit("__**Memproses Thumbnail...**__")
     await generate_cover(requested_by, title, duration, thumbnail, chat_title)
 
@@ -375,7 +376,6 @@ async def play(_, message: Message):
 
 @Client.on_message(command("current") & other_filters)
 async def currents(_, message: Message):
-    global que
     queuess = que.get(message.chat.id)
     stats = updated_stats(message.chat, queuess)
     if stats:
@@ -386,7 +386,6 @@ async def currents(_, message: Message):
 
 @Client.on_message(command("playlist") & other_filters)
 async def playlists(_, message: Message):
-    global que
     queue = que.get(message.chat.id)
     if not queue:
         await message.reply("Bot musik tersedia")
