@@ -12,8 +12,8 @@ from pyrogram.types import Message
 from youtube_search import YoutubeSearch
 from youtubesearchpython import SearchVideos
 
-from ..helpers.filters import command
-from ..helpers.functions import get_text, progress
+from helpers.filters import command
+from helpers.functions import get_text, progress
 
 is_downloading = False
 

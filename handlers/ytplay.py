@@ -19,14 +19,14 @@ from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup
 from pyrogram.errors import UserAlreadyParticipant
 
 # GroupMusic Module
-from ..callsmusic import callsmusic, queues
-from ..callsmusic.callsmusic import client as user
-from ..converter import convert
-from ..downloaders import youtube
-from ..helpers.admins import get_administrators
-from ..helpers.filters import command, other_filters
-from ..helpers.decorators import errors, authorized_users_only, cb_admin_check
-from ..helpers.functions import changeImageSize
+from callsmusic import callsmusic, queues
+from callsmusic.callsmusic import client as user
+from converter import convert
+from downloaders import youtube
+from helpers.admins import get_administrators
+from helpers.filters import command, other_filters
+from helpers.decorators import errors, authorized_users_only, cb_admin_check
+from helpers.functions import changeImageSize
 
 
 async def generate_cover(requested_by, title, duration, thumbnail, message: Message):

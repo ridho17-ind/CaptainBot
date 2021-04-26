@@ -3,11 +3,11 @@ from asyncio.queues import QueueEmpty
 from pyrogram import Client, filters
 from pyrogram.errors import UserAlreadyParticipant
 from pyrogram.types import Message
-from ..callsmusic import callsmusic
-from ..callsmusic.callsmusic import client as user
+from callsmusic import callsmusic
+from callsmusic.callsmusic import client as user
 
-from ..helpers.filters import command, other_filters
-from ..helpers.decorators import errors, authorized_users_only, admin_only
+from helpers.filters import command, other_filters
+from helpers.decorators import errors, authorized_users_only, admin_only
 
 
 @Client.on_message(command("pause") & other_filters)

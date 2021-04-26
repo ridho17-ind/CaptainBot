@@ -1,18 +1,18 @@
 from pyrogram import Client, filters
 from pyrogram.types import Message, InlineKeyboardMarkup, InlineKeyboardButton
 
-from ..config import BOT_NAME as BN
-from ..config import DEV_NAME as DNAME
+from config import BOT_NAME as BN
+from config import DEV_NAME as DNAME
 
-from ..config import BOT_USERNAME as BUN
-from ..config import USERBOT_USERNAME as USUN
+from config import BOT_USERNAME as BUN
+from config import USERBOT_USERNAME as USUN
 
-from ..config import GROUP_URI as GURI
+from config import GROUP_URI as GURI
 
-from ..config import DEV_ID as DID
-from ..config import STICKER_ID as SID
+from config import DEV_ID as DID
+from config import STICKER_ID as SID
 
-from ..helpers.filters import other_filters2, other_filters
+from helpers.filters import other_filters2, other_filters
 
 
 @Client.on_message(filters.command("start") & other_filters2)

@@ -9,7 +9,7 @@ from pyrogram import Client
 
 from youtube_search import YoutubeSearch
 
-from ..helpers.filters import command
+from helpers.filters import command
 
 logging.basicConfig(
     level=logging.DEBUG, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"

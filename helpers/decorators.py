@@ -3,9 +3,9 @@ from typing import Callable
 from pyrogram import Client
 from pyrogram.types import Message
 
-from ..helpers.admins import get_administrators
-from ..config import SUDO_USERS
-from ..cache.admins import admins as a
+from helpers.admins import get_administrators
+from config import SUDO_USERS
+from cache.admins import admins as a
 
 
 def errors(func: Callable) -> Callable:
@@ -50,5 +50,3 @@ def cb_admin_check(func: Callable) -> Callable:
             await cb.answer("Kamu tidak diizinkan untuk melakukan ini!", show_alert=True)
             return
     return decorator
-
-

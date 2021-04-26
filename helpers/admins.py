@@ -2,7 +2,7 @@ from typing import List
 
 from pyrogram.types import Chat, User
 
-from ..cache import admins
+from cache import admins
 
 
 async def get_administrators(chat: Chat) -> List[User]:
