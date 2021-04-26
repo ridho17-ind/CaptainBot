@@ -30,71 +30,6 @@ from helpers.functions import changeImageSize
 from config import que
 
 
-async def generate_cover(requested_by, title, duration, thumbnail, message: Message):
-    """
-    Function to create new edited cover from original youtube video cover
-    """
-    async with aiohttp.ClientSession() as session:
-        async with session.get(thumbnail) as resp:
-            if resp.status == 200:
-                f = await aiofiles.open("background.png", mode="wb")
-                await f.write(await resp.read())
-                await f.close()
-
-    chat_title = message.chat.title
-    image1 = Image.open("./background.png")
-    image2 = Image.open("etc/foreground.png")
-    image3 = changeImageSize(1280, 720, image1)
-    image4 = changeImageSize(1280, 720, image2)
-    image5 = image3.convert("RGBA")
-    image6 = image4.convert("RGBA")
-    Image.alpha_composite(image5, image6).save("temp.png")
-    img = Image.open("temp.png")
-    draw = ImageDraw.Draw(img)
-    font = ImageFont.truetype("etc/font.otf", 32)
-    draw.text((190, 550), f"Judul: {title}", (255, 255, 255), font=font)
-    draw.text(
-        (190, 590), f"Durasi: {duration}", (255, 255, 255), font=font
-    )
-    draw.text((190, 630), f"Diputar Di: {chat_title[:20]}...", (255, 255, 255), font=font)
-    draw.text((190, 670),
-              f"Atas Permintaan: {requested_by}",
-              (255, 255, 255),
-              font=font,
-              )
-    img.save("final.png")
-    os.remove("temp.png")
-    os.remove("background.png")
-
-
-@Client.on_callback_query(filters.regex(pattern=r'^(playlist)$'))
-async def plylist_callback(_, cb):
-    global que
-    type_ = cb.matches[0].group(1)
-    if type_ == "playlist":
-        queue = que.get(cb.message.chat.id)
-        if not queue:
-            await cb.message.edit("Bot bisa digunakan")
-        temp = []
-        for t in queue:
-            temp.append(t)
-        now_playing = temp[0][0]
-        by = temp[0][1].mention(style="md")
-        msg = f"**Sedang Diputar** di {cb.message.chat.title}"
-        msg += f"\n- {now_playing}"
-        msg += f"\n- Atas Permintaan {by}"
-        temp.pop(0)
-        if temp:
-            msg += "\n\n"
-            msg += "**Dalam Antrian**"
-            for song in temp:
-                name = song[0]
-                usr = song[1].mention(style="md")
-                msg += f"\n- {name}"
-                msg += f"\n- Atas Permintaan{usr}"
-        await cb.message.edit(msg)
-
-
 def updated_stats(chat, queue, vol=100):
     """
     Function to update stats in active voice chats
@@ -135,6 +70,124 @@ def ply_typ(type_):
         ]
     )
     return mar
+
+
+async def generate_cover(requested_by, title, views, duration, thumbnail):
+    """
+    Function to create new edited cover from original youtube video cover
+    """
+    async with aiohttp.ClientSession() as session:
+        async with session.get(thumbnail) as resp:
+            if resp.status == 200:
+                f = await aiofiles.open("background.png", mode="wb")
+                await f.write(await resp.read())
+                await f.close()
+
+    image1 = Image.open("./background.png")
+    image2 = Image.open("etc/foreground.png")
+    image3 = changeImageSize(1280, 720, image1)
+    image4 = changeImageSize(1280, 720, image2)
+    image5 = image3.convert("RGBA")
+    image6 = image4.convert("RGBA")
+    Image.alpha_composite(image5, image6).save("temp.png")
+    img = Image.open("temp.png")
+    draw = ImageDraw.Draw(img)
+    font = ImageFont.truetype("etc/font.otf", 32)
+    draw.text((190, 550), f"Judul: {title}", (255, 255, 255), font=font)
+    draw.text(
+        (190, 590), f"Durasi: {duration}", (255, 255, 255), font=font
+    )
+    draw.text((190, 630), f"Penonton: {views} penonton", (255, 255, 255), font=font)
+    draw.text((190, 670),
+              f"Atas Permintaan: {requested_by}",
+              (255, 255, 255),
+              font=font,
+              )
+    img.save("final.png")
+    os.remove("temp.png")
+    os.remove("background.png")
+
+
+@Client.on_message(command("playlist") & other_filters)
+async def playlists(_, message: Message):
+    global que
+    queue = que.get(message.chat.id)
+    if not queue:
+        await message.reply("Bot musik tersedia")
+    temp = []
+    for t in queue:
+        temp.append(t)
+    now_playing = temp[0][0]
+    by = temp[0][1].mention(style="md")
+    msg = f"**Sedang Diputar** di {message.chat.title}"
+    msg += f"\n- {now_playing}"
+    msg += f"\n- Atas permintaan {by}"
+    temp.pop(0)
+    if temp:
+        msg += "\n\n"
+        msg += "**Antrian**"
+        for song in temp:
+            name = song[0]
+            usr = song[1].mention(style="md")
+            msg += f"\n- {name}"
+            msg += f"\n- Atas Permintaan {usr}"
+    await message.reply(msg)
+
+
+@Client.on_message(command("player") & other_filters)
+@authorized_users_only
+async def player(_, message: Message):
+    playing = None
+    if message.chat.id in callsmusic.pytgcalls.active_calls:
+        playing = True
+    queue = que.get(message.chat.id)
+    stats = updated_stats(message.chat, queue)
+    if stats:
+        if playing:
+            await message.reply(stats, reply_markup=ply_typ("pause"))
+        else:
+            await message.reply(stats, reply_markup=ply_typ("play"))
+    else:
+        await message.reply("Tidak ada Obrolan suara yang berjalan disini")
+
+
+@Client.on_message(command("current") & other_filters)
+async def currents(_, message: Message):
+    global que
+    queuess = que.get(message.chat.id)
+    stats = updated_stats(message.chat, queuess)
+    if stats:
+        await message.reply(stats)
+    else:
+        await message.reply("Tidak ada obrolan suara yang berjalan di grup ini")
+
+
+@Client.on_callback_query(filters.regex(pattern=r'^(playlist)$'))
+async def plylist_callback(_, cb):
+    global que
+    type_ = cb.matches[0].group(1)
+    if type_ == "playlist":
+        queue = que.get(cb.message.chat.id)
+        if not queue:
+            await cb.message.edit("Bot bisa digunakan")
+        temp = []
+        for t in queue:
+            temp.append(t)
+        now_playing = temp[0][0]
+        by = temp[0][1].mention(style="md")
+        msg = f"**Sedang Diputar** di {cb.message.chat.title}"
+        msg += f"\n- {now_playing}"
+        msg += f"\n- Atas Permintaan {by}"
+        temp.pop(0)
+        if temp:
+            msg += "\n\n"
+            msg += "**Dalam Antrian**"
+            for song in temp:
+                name = song[0]
+                usr = song[1].mention(style="md")
+                msg += f"\n- {name}"
+                msg += f"\n- Atas Permintaan{usr}"
+        await cb.message.edit(msg)
 
 
 @Client.on_callback_query(filters.regex(pattern=r'^(play|pause|skip|leave|pus|resume|menu|cls)$'))
@@ -375,57 +428,3 @@ async def play(_, message: Message):
         )
         os.remove("final.png")
         return await lel.delete()
-
-
-@Client.on_message(command("current") & other_filters)
-async def currents(_, message: Message):
-    global que
-    queuess = que.get(message.chat.id)
-    stats = updated_stats(message.chat, queuess)
-    if stats:
-        await message.reply(stats)
-    else:
-        await message.reply("Tidak ada obrolan suara yang berjalan di grup ini")
-
-
-@Client.on_message(command("playlist") & other_filters)
-async def playlists(_, message: Message):
-    global que
-    queue = que.get(message.chat.id)
-    if not queue:
-        await message.reply("Bot musik tersedia")
-    temp = []
-    for t in queue:
-        temp.append(t)
-    now_playing = temp[0][0]
-    by = temp[0][1].mention(style="md")
-    msg = f"**Sedang Diputar** di {message.chat.title}"
-    msg += f"\n- {now_playing}"
-    msg += f"\n- Atas permintaan {by}"
-    temp.pop(0)
-    if temp:
-        msg += "\n\n"
-        msg += "**Antrian**"
-        for song in temp:
-            name = song[0]
-            usr = song[1].mention(style="md")
-            msg += f"\n- {name}"
-            msg += f"\n- Atas Permintaan {usr}"
-    await message.reply(msg)
-
-
-@Client.on_message(command("player") & other_filters)
-@authorized_users_only
-async def player(_, message: Message):
-    playing = None
-    if message.chat.id in callsmusic.pytgcalls.active_calls:
-        playing = True
-    queue = que.get(message.chat.id)
-    stats = updated_stats(message.chat, queue)
-    if stats:
-        if playing:
-            await message.reply(stats, reply_markup=ply_typ("pause"))
-        else:
-            await message.reply(stats, reply_markup=ply_typ("play"))
-    else:
-        await message.reply("Tidak ada Obrolan suara yang berjalan disini")
