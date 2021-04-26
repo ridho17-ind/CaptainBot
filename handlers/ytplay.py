@@ -35,7 +35,6 @@ def updated_stats(chat, queue, vol=100):
     Function to update stats in active voice chats
     """
     if chat.id in callsmusic.pytgcalls.active_calls:
-        # if chat.id in active_chats:
         stats = 'Pengaturan dari **{}**'.format(chat.title)
         if len(que) > 0:
             stats += '\n\n'
@@ -110,7 +109,7 @@ async def generate_cover(requested_by, title, views, duration, thumbnail):
 
 @Client.on_message(command("playlist") & other_filters)
 async def playlists(_, message: Message):
-    global que
+    
     queue = que.get(message.chat.id)
     if not queue:
         await message.reply("Bot musik tersedia")
@@ -153,7 +152,6 @@ async def player(_, message: Message):
 
 @Client.on_message(command("current") & other_filters)
 async def currents(_, message: Message):
-    global que
     queuess = que.get(message.chat.id)
     stats = updated_stats(message.chat, queuess)
     if stats:
@@ -164,7 +162,6 @@ async def currents(_, message: Message):
 
 @Client.on_callback_query(filters.regex(pattern=r'^(playlist)$'))
 async def plylist_callback(_, cb):
-    global que
     type_ = cb.matches[0].group(1)
     if type_ == "playlist":
         queue = que.get(cb.message.chat.id)
@@ -193,7 +190,7 @@ async def plylist_callback(_, cb):
 @Client.on_callback_query(filters.regex(pattern=r'^(play|pause|skip|leave|pus|resume|menu|cls)$'))
 @cb_admin_check
 async def othr_callback(_, cb):
-    global que
+    
     queue = que.get(cb.message.chat.id)
     type_ = cb.matches[0].group(1)
     chat_id = cb.message.chat.id
@@ -244,6 +241,8 @@ async def othr_callback(_, cb):
         await cb.message.edit(msg)
 
     elif type_ == "resume":
+        print(callsmusic.pytgcalls.active_calls[chat_id])
+        print(callsmusic.pytgcalls.active_calls)
         if chat_id not in callsmusic.pytgcalls.active_calls:
             await cb.answer("Tidak ada obrolan suara yang aktif")
         if callsmusic.pytgcalls.active_calls[chat_id] == "playing":
@@ -256,8 +255,6 @@ async def othr_callback(_, cb):
         if chat_id not in callsmusic.pytgcalls.active_calls:
             await cb.answer("Tidak ada obrolan suara yang aktif")
         if callsmusic.pytgcalls.active_calls[chat_id] == "playing":
-            await cb.answer("Sudah Memutar!", show_alert=True)
-        else:
             callsmusic.pytgcalls.pause_stream(chat_id)
             await cb.answer("Lagu Dijeda")
 
@@ -320,7 +317,7 @@ async def othr_callback(_, cb):
 @errors
 async def play(_, message: Message):
     global file_path
-    global que
+    
     lel = await message.reply("🔄 **Memprosses** ...")
     admins = await get_administrators(message.chat)
     print(admins)
