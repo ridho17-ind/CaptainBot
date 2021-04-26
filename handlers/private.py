@@ -30,10 +30,10 @@ async def start(_, message: Message):
                     InlineKeyboardButton(
                         "🎛 Perintah", url="https://telegra.ph/Perintah---Captain-Music-Bot-04-25"
                     )
-                ]
+                ],
                 [
                     InlineKeyboardButton(
-                        "💬 Grup", url=GURI
+                        "💬 Grup", url=f"{GURI}"
                     ),
                     InlineKeyboardButton(
                         "🔊 Bot Info Channel", url="https://t.me/InfoOfAllBot"
