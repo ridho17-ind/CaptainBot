@@ -50,7 +50,7 @@ async def start(_, message: Message):
     )
 
 
-@Client.on_message(filters.command("online") & ~filters.private & other_filters)
+@Client.on_message(filters.command("online") & other_filters2)
 async def gstart(_, message: Message):
     await message.reply_text("""**Bot Musik Online ✅**""")
 
