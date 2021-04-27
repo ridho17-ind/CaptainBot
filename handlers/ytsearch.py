@@ -22,7 +22,7 @@ logger = logging.getLogger(__name__)
 logging.getLogger("pyrogram").setLevel(logging.WARNING)
 
 
-def mrkup(i: Union[str], results: Union[Dict[str]]):
+def mrkup(i: Union[str], results: Union[str]):
     i = i
     for num in i:
         mar = InlineKeyboardMarkup([
