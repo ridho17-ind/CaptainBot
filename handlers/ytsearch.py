@@ -22,11 +22,12 @@ logger = logging.getLogger(__name__)
 logging.getLogger("pyrogram").setLevel(logging.WARNING)
 
 
-def mrkup(i: Union[int, str], results: Union[Dict[str, int]]):
+def mrkup(i: Union[str], results: Union[Dict[str]]):
+    i = i
     for num in i:
         mar = InlineKeyboardMarkup([
             [
-                InlineKeyboardButton(f"{num}", f"https://youtube.com{str(results[num])['url_suffix']}")
+                InlineKeyboardButton(f"{num}", f"https://youtube.com{results[num]['url_suffix']}")
             ]
         ])
         return mar
