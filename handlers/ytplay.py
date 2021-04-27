@@ -113,9 +113,9 @@ def updated_stats(chat, queue, vol=100):
 
 def ply_typ(type_):
     if type_ == "play":
-        ico = "▶"
+        pass
     else:
-        ico = "⏸"
+        pass
     mar = InlineKeyboardMarkup(
         [
             [
