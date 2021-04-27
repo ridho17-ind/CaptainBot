@@ -26,7 +26,7 @@ def mrkup(i: Union[int, str], results: Union[Dict[str, int]]):
     for num in i:
         mar = InlineKeyboardMarkup([
             [
-                InlineKeyboardButton(f"{num}", f"https://youtube.com{results[num]['url_suffix']}")
+                InlineKeyboardButton(f"{num}", f"https://youtube.com{str(results[num])['url_suffix']}")
             ]
         ])
         return mar
