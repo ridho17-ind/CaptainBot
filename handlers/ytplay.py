@@ -25,7 +25,7 @@ from converter import convert
 from downloaders import youtube
 from helpers.admins import get_administrators
 from helpers.filters import command, other_filters
-from helpers.decorators import errors, authorized_users_only, cb_admin_check
+from helpers.decorators import errors, authorized_users_only
 from helpers.functions import changeImageSize
 from config import que
 
@@ -191,11 +191,17 @@ async def plylist_callback(_, cb):
                 usr = song[1].mention(style="md")
                 msg += f"\n- {name}"
                 msg += f"\n- Atas Permintaan{usr}"
-        await cb.message.edit(msg)
+        await cb.message.edit(msg, reply_markup=InlineKeyboardMarkup(
+            [
+                [
+                    InlineKeyboardButton("⬅ Kembali", "back")
+                ]
+            ]
+        ))
 
 
-@Client.on_callback_query(filters.regex(pattern=r'^(play|pause|skip|leave|pus|resume|menu|cls)$'))
-@cb_admin_check
+@Client.on_callback_query(filters.regex(pattern=r"^(play|pause|skip|leave|puse|resume|menu|cls|back)$"))
+@authorized_users_only
 async def othr_callback(_, cb):
     global que
     queue = que.get(cb.message.chat.id)
@@ -245,7 +251,24 @@ async def othr_callback(_, cb):
                 usr = song[1].mention(style="md")
                 msg += f"\n- {name}"
                 msg += f"\n- Atas Permintaan{usr}"
-        await cb.message.edit(msg)
+        await cb.message.edit(msg, reply_markup=InlineKeyboardMarkup(
+            [
+                [
+                    InlineKeyboardButton("⬅ Kembali", "back")
+                ]
+            ]
+        ))
+
+    elif type_ == "back":
+        playing = None
+        if chat_id in callsmusic.pytgcalls.active_calls:
+            playing = True
+        queue = que.get(chat_id)
+        stats = updated_stats(msg_chat, queue)
+        if playing:
+            await cb.message.reply(stats, reply_markup=ply_typ("pause"))
+        else:
+            await cb.message.reply(stats, reply_markup=ply_typ("play"))
 
     elif type_ == "resume":
         if chat_id not in callsmusic.pytgcalls.active_calls:
