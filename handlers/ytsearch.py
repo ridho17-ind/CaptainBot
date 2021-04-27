@@ -1,5 +1,3 @@
-from typing import Union, Dict
-
 import pyrogram
 
 # the logging things
@@ -22,11 +20,11 @@ logger = logging.getLogger(__name__)
 logging.getLogger("pyrogram").setLevel(logging.WARNING)
 
 
-def mrkup(i: Union[int, str], results: Union[str]):
-    for num in i:
+def mrkup(i, results):
+    for num in range(0, i):
         mar = InlineKeyboardMarkup([
             [
-                InlineKeyboardButton(f"{str(num)}", url=f"https://youtube.com{results[int(num)]['url_suffix']}")
+                InlineKeyboardButton(f"{num}", url=f"https://youtube.com{results[num]['url_suffix']}")
             ]
         ])
         return mar
