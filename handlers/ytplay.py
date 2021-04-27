@@ -41,7 +41,7 @@ def updated_stats(chat, queue, vol=100):
             stats += f'Volume : {vol}%\n'
             stats += f'Lagu dalam antrian : `{len(que)}`\n'
             stats += f'Sedang diputar : **{queue[0][0]}**\n'
-            stats += f'Atas permintaan : {queue[0][1].mention}'
+            stats += f'Atas permintaan : {queue[0][1].mention(style="md")}'
     else:
         stats = None
     return stats
@@ -161,6 +161,7 @@ async def currents(_, message: Message):
 
 @Client.on_callback_query(filters.regex(pattern=r'^(playlist)$'))
 async def plylist_callback(_, cb):
+    global que
     type_ = cb.matches[0].group(1)
     if type_ == "playlist":
         queue = que.get(cb.message.chat.id)
@@ -189,7 +190,7 @@ async def plylist_callback(_, cb):
 @Client.on_callback_query(filters.regex(pattern=r'^(play|pause|skip|leave|pus|resume|menu|cls)$'))
 @cb_admin_check
 async def othr_callback(_, cb):
-    
+    global que
     queue = que.get(cb.message.chat.id)
     type_ = cb.matches[0].group(1)
     chat_id = cb.message.chat.id
