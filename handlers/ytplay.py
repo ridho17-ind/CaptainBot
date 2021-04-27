@@ -30,47 +30,6 @@ from helpers.functions import changeImageSize
 from config import que
 
 
-def updated_stats(chat, queue, vol=100):
-    """
-    Function to update stats in active voice chats
-    """
-    if chat.id in callsmusic.pytgcalls.active_calls:
-        stats = 'Pengaturan dari **{}**'.format(chat.title)
-        if len(que) > 0:
-            stats += '\n\n'
-            stats += f'Volume : {vol}%\n'
-            stats += f'Lagu dalam antrian : `{len(que)}`\n'
-            stats += f'Sedang diputar : **{queue[0][0]}**\n'
-            stats += f'Atas permintaan : {queue[0][1].mention(style="md")}'
-    else:
-        stats = None
-    return stats
-
-
-def ply_typ(type_):
-    if type_ == "play":
-        ico = "▶"
-    else:
-        ico = "⏸"
-    mar = InlineKeyboardMarkup(
-        [
-            [
-                InlineKeyboardButton('⏹', 'leave'),
-                InlineKeyboardButton('⏸', 'pause'),
-                InlineKeyboardButton('▶', 'resume'),
-                InlineKeyboardButton('⏭', 'skip')
-            ],
-            [
-                InlineKeyboardButton(f"Playlist 📖", "playlist")
-            ],
-            [
-                InlineKeyboardButton(f"❌ Tutup", "cls")
-            ]
-        ]
-    )
-    return mar
-
-
 async def generate_cover(requested_by, title, views, duration, thumbnail):
     """
     Function to create new edited cover from original youtube video cover
@@ -132,6 +91,60 @@ async def playlists(_, message: Message):
     await message.reply(msg)
 
 
+# ================================ Settings ===========================================
+
+
+def updated_stats(chat, queue, vol=100):
+    """
+    Function to update stats in active voice chats
+    """
+    if chat.id in callsmusic.pytgcalls.active_calls:
+        stats = 'Pengaturan dari **{}**'.format(chat.title)
+        if len(que) > 0:
+            stats += '\n\n'
+            stats += f'Volume : {vol}%\n'
+            stats += f'Lagu dalam antrian : `{len(que)}`\n'
+            stats += f'Sedang diputar : **{queue[0][0]}**\n'
+            stats += f'Atas permintaan : {queue[0][1].mention(style="md")}'
+    else:
+        stats = None
+    return stats
+
+
+def ply_typ(type_):
+    if type_ == "play":
+        ico = "▶"
+    else:
+        ico = "⏸"
+    mar = InlineKeyboardMarkup(
+        [
+            [
+                InlineKeyboardButton('⏹', 'leave'),
+                InlineKeyboardButton('⏸', 'pause'),
+                InlineKeyboardButton('▶', 'resume'),
+                InlineKeyboardButton('⏭', 'skip')
+            ],
+            [
+                InlineKeyboardButton(f"Playlist 📖", "playlist")
+            ],
+            [
+                InlineKeyboardButton(f"❌ Tutup", "cls")
+            ]
+        ]
+    )
+    return mar
+
+
+@Client.on_message(command("current") & other_filters)
+async def currents(_, message: Message):
+    queuess = que.get(message.chat.id)
+    stats = updated_stats(message.chat, queuess)
+    if stats:
+        await message.reply(stats)
+    else:
+        await message.reply("Tidak ada obrolan suara yang berjalan di grup ini")
+
+
 @Client.on_message(command("player") & other_filters)
 @authorized_users_only
 async def player(_, message: Message):
@@ -149,20 +162,14 @@ async def player(_, message: Message):
         await message.reply("Tidak ada Obrolan suara yang berjalan disini")
 
 
-@Client.on_message(command("current") & other_filters)
-async def currents(_, message: Message):
-    queuess = que.get(message.chat.id)
-    stats = updated_stats(message.chat, queuess)
-    if stats:
-        await message.reply(stats)
-    else:
-        await message.reply("Tidak ada obrolan suara yang berjalan di grup ini")
-
-
 @Client.on_callback_query(filters.regex(pattern=r'^(playlist)$'))
 async def plylist_callback(_, cb):
     global que
+    que.get(cb.message.chat.id)
     type_ = cb.matches[0].group(1)
+    cb.message.chat
+    cb.message.chat.id
+    cb.message.reply_markup.inline_keyboard[1][0].callback_data
     if type_ == "playlist":
         queue = que.get(cb.message.chat.id)
         if not queue:
@@ -210,7 +217,7 @@ async def othr_callback(_, cb):
     elif type_ == "pause":
         if chat_id not in callsmusic.pytgcalls.active_calls:
             await cb.answer("Tidak ada obrolan suara yang aktif")
-        if callsmusic.pytgcalls.active_calls[chat_id] == "playing":
+        if callsmusic.pytgcalls.active_calls[chat_id] == "paused":
             await cb.answer("Sudah Memutar!", show_alert=True)
         else:
             callsmusic.pytgcalls.pause_stream(chat_id)
@@ -316,27 +323,36 @@ async def othr_callback(_, cb):
 @Client.on_message(command("play") & other_filters)
 @errors
 async def play(_, message: Message):
-    global file_path
     global que
     lel = await message.reply("🔄 **Memprosses** ...")
     admins = await get_administrators(message.chat)
     print(admins)
     chat_id = message.chat.id
 
-    for admin in admins:
-        if admin == message.from_user.id:
-            try:
-                invite_link = await _.export_chat_invite_link(chat_id)
-            except:
-                await lel.edit("**Tambahkan saya sebagai admin terlebih dahulu.**")
-                return
-            try:
-                await user.join_chat(invite_link)
-                await lel.edit("**Userbot masuk kedalam grup**")
-            except UserAlreadyParticipant:
-                pass
-            except Exception as e:
-                print(e)
+    try:
+        users = await user.get_me()
+    except:
+        users.first_name = "helper"
+    usar = user
+    usid = usar.id
+    try:
+        await _.get_chat_member(chat_id, wew)
+    except:
+        for admin in admins:
+            if admin == message.from_user.id:
+                try:
+                    invite_link = await _.export_chat_invite_link(chat_id)
+                except:
+                    await lel.edit("**Tambahkan saya sebagai admin terlebih dahulu.**")
+                    return
+
+                try:
+                    await user.join_chat(invite_link)
+                    await lel.edit("**Userbot masuk kedalam grup**")
+                except UserAlreadyParticipant:
+                    pass
+                except Exception as e:
+                    print(e)
     try:
         await user.get_chat(chat_id)
     except:
@@ -344,8 +360,6 @@ async def play(_, message: Message):
                        "kali atau tambahkan bot secara manual__")
         return
 
-    user_name = message.from_user.first_name
-    requested_by = user_name
     chat_title = message.chat.title
     await lel.edit("🔎 **Mencari**...")
 
@@ -373,45 +387,28 @@ async def play(_, message: Message):
         print(str(e))
         return
 
-    await lel.edit("__**Memproses Thumbnail...**__")
-    await generate_cover(requested_by, title, views, duration, thumbnail)
-
     keyboard = InlineKeyboardMarkup(
         [
             [
                 InlineKeyboardButton("📖 Playlist", callback_data="playlist"),
                 InlineKeyboardButton("⏯ Menu", callback_data="menu")
             ],
-            [
-                InlineKeyboardButton(
-                    text="Tonton Di YouTube 🎬",
-                    url=url
-                )
-            ],
-            [
-                InlineKeyboardButton(
-                    text="❌ Tutup",
-                    callback_data="cls"
-                )
-            ]
+            [InlineKeyboardButton(text="Tonton Di YouTube 🎬", url=url)],
+            [InlineKeyboardButton(text="❌ Tutup", callback_data="cls")]
         ]
     )
-
-    audio = (message.reply_to_message.audio or message.reply_to_message.voice) if message.reply_to_message else None
-
-    if audio:
-        await lel.edit_text("Gunakan perintah /music jika anda ingin memutar lagu dari sebuah file")
-
-    elif url:
-        file_path = await convert(youtube.download(url))
-    else:
-        return await lel.edit_text("❗ Kamu tidak memberikan apapun kepada saya untuk diputar!")
+    requested_by = message.from_user.first_name
+    await lel.edit("__**Memproses Thumbnail...**__")
+    await generate_cover(requested_by, title, views, duration, thumbnail)
+    file_path = await convert(youtube.download(url))
 
     if message.chat.id in callsmusic.pytgcalls.active_calls:
         position = await queues.put(message.chat.id, file=file_path)
+        c_name = title
+        r_by = message.from_user
         qeue = que.get(message.chat.id)
         loc = file_path
-        appendable = [chat_title, requested_by, loc]
+        appendable = [c_name, r_by, loc]
         qeue.append(appendable)
         await message.reply_photo(
             photo="final.png",
@@ -421,10 +418,13 @@ async def play(_, message: Message):
         os.remove("final.png")
         return await lel.delete()
     else:
+        chat_id = message.chat.id
         que[chat_id] = []
         qeue = que.get(message.chat.id)
         loc = file_path
-        appendable = [chat_title, requested_by, loc]
+        s_name = title
+        r_by = message.from_user
+        appendable = [s_name, r_by, loc]
         qeue.append(appendable)
         callsmusic.pytgcalls.join_group_call(message.chat.id, file_path)
         await message.reply_photo(
