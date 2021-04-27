@@ -333,7 +333,7 @@ async def play(_, message: Message):
         users = await user.get_me()
     except:
         users.first_name = "helper"
-    usar = user
+    usar = users
     usid = usar.id
     try:
         await _.get_chat_member(chat_id, usid)
