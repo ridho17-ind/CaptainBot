@@ -1,7 +1,7 @@
 from asyncio.queues import QueueEmpty
 
 from pyrogram import Client, filters
-from pyrogram.errors import UserAlreadyParticipant
+from pyrogram.errors import UserAlreadyParticipant, UserNotParticipant
 from pyrogram.types import Message
 from callsmusic import callsmusic
 from callsmusic.callsmusic import client as user
@@ -9,7 +9,7 @@ from callsmusic.callsmusic import client as user
 from helpers.filters import command, other_filters
 from helpers.decorators import errors, authorized_users_only, admin_only
 
-from cache.admins import set
+import cache.admins
 
 
 @Client.on_message(command("pause") & other_filters)
@@ -78,11 +78,11 @@ async def skip(_, message: Message):
 @errors
 @admin_only
 async def reload(_, message: Message):
-    set(message.chat.id, [member.user for member in await message.chat.get_members(filter="administrators")])
-    await message.reply("✅ Bot dimulai ulang\n✅ Admin diperbaharui")
+    cache.admins.set(message.chat.id, [member.user for member in await message.chat.get_members(filter="administrators")])
+    await message.reply("✅ **Bot berhasil dimulai ulang!\n• Daftar admin telah diperbarui.**")
 
 
-@Client.on_message(filters.group & command("joinbot"))
+@Client.on_message(~filters.group & command("joinbot"))
 @admin_only
 @errors
 async def invtochnl(client: Client, message: Message):
@@ -100,9 +100,9 @@ async def invtochnl(client: Client, message: Message):
 
     try:
         await user.join_chat(invitelink)
-        await message.reply("`Userbot masuk kedalam grup.`")
+        await message.reply("`Asisten masuk kedalam grup.`")
     except UserAlreadyParticipant:
-        await message.reply("`Userbot sudah berada didalam grup.`")
+        await message.reply("`Asisten sudah berada didalam grup.`")
     except Exception as e:
         print(e)
         await message.reply(
@@ -111,3 +111,15 @@ async def invtochnl(client: Client, message: Message):
         )
         return
 
+
+@Client.on_message(~filters.group & command("leavebot"))
+@errors
+@admin_only
+async def lvfromchnl(client: Client, message: Message):
+    chat_id = message.chat.id
+    try:
+        await user.leave_chat(chat_id)
+        await message.reply("`Asisten berhasil keluar dari grup.`")
+    except UserNotParticipant:
+        await message.reply("`Asisten sudah keluar dari grup sebelumnya`.")
+        return

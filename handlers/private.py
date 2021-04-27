@@ -12,7 +12,7 @@ from config import GROUP_URI as GURI
 from config import DEV_ID as DID
 from config import STICKER_ID as SID
 
-from helpers.filters import other_filters2, other_filters
+from helpers.filters import other_filters2
 
 
 @Client.on_message(filters.command("start") & ~filters.group & other_filters2)
@@ -21,36 +21,25 @@ async def start(_, message: Message):
     await message.reply_text(
         f"""Haiii {message.from_user.first_name} Saya **{BN}** 🎵\n\n
 Saya bisa memutar musik di obrolan suara grup anda. Saya dikembangkan oleh [{DNAME}](tg://user?id={str(DID)}).\n
-Tambahkan [Assistant](https://t.me/{USUN}) dan [Bot](https://t.me/{BUN}) 
+Tambahkan [Assisten](https://t.me/{USUN}) dan [Bot](https://t.me/{BUN}) 
 kedalam grup Anda, dan nikmati mendengar musik dengan bebas!
         """,
         reply_markup=InlineKeyboardMarkup(
             [
+                [InlineKeyboardButton("🎛 Perintah", url="https://telegra.ph/Perintah---Captain-Music-Bot-04-25")],
                 [
-                    InlineKeyboardButton(
-                        "🎛 Perintah", url="https://telegra.ph/Perintah---Captain-Music-Bot-04-25"
-                    )
+                    InlineKeyboardButton("💬 Grup", url=f"{GURI}"),
+                    InlineKeyboardButton("🔊 Bot Info Channel", url="https://t.me/InfoOfAllBot")
                 ],
-                [
-                    InlineKeyboardButton(
-                        "💬 Grup", url=f"{GURI}"
-                    ),
-                    InlineKeyboardButton(
-                        "🔊 Bot Info Channel", url="https://t.me/InfoOfAllBot"
-                    )
-                ],
-                [
-                    InlineKeyboardButton(
-                        "➕ Tambahkan Bot Kedalam Grup ➕", url=f"https://t.me/{BUN}?startgroup=true"
-                    )
-                ]
+                [InlineKeyboardButton("➕ Tambahkan Bot Kedalam Grup ➕", url=f"https://t.me/{BUN}?startgroup=true")],
+                [InlineKeyboardButton("Donasi", url="saweria.co/ShohihAbdul")]
             ]
         ),
         disable_web_page_preview=True
     )
 
 
-@Client.on_message(filters.command("online") & other_filters2)
+@Client.on_message(filters.command("online") & other_filters2 & ~filters.group)
 async def gstart(_, message: Message):
     await message.reply_text("""**Bot Musik Online ✅**""")
 

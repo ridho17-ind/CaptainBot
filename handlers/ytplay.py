@@ -248,8 +248,6 @@ async def othr_callback(_, cb):
         await cb.message.edit(msg)
 
     elif type_ == "resume":
-        print(callsmusic.pytgcalls.active_calls[chat_id])
-        print(callsmusic.pytgcalls.active_calls)
         if chat_id not in callsmusic.pytgcalls.active_calls:
             await cb.answer("Tidak ada obrolan suara yang aktif")
         if callsmusic.pytgcalls.active_calls[chat_id] == "playing":
@@ -326,7 +324,6 @@ async def play(_, message: Message):
     global que
     lel = await message.reply("🔄 **Memprosses** ...")
     admins = await get_administrators(message.chat)
-    print(admins)
     chat_id = message.chat.id
 
     try:
@@ -398,15 +395,14 @@ async def play(_, message: Message):
         ]
     )
     requested_by = message.from_user.first_name
-    await lel.edit("__**Memproses Thumbnail...**__")
     await generate_cover(requested_by, title, views, duration, thumbnail)
     file_path = await convert(youtube.download(url))
 
     if message.chat.id in callsmusic.pytgcalls.active_calls:
         position = await queues.put(message.chat.id, file=file_path)
+        qeue = que.get(message.chat.id)
         c_name = title
         r_by = message.from_user
-        qeue = que.get(message.chat.id)
         loc = file_path
         appendable = [c_name, r_by, loc]
         qeue.append(appendable)
@@ -426,6 +422,7 @@ async def play(_, message: Message):
         r_by = message.from_user
         appendable = [s_name, r_by, loc]
         qeue.append(appendable)
+        print(qeue)
         callsmusic.pytgcalls.join_group_call(message.chat.id, file_path)
         await message.reply_photo(
             photo="final.png",
