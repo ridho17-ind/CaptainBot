@@ -4,7 +4,7 @@ import pyrogram
 
 import logging
 
-from pyrogram.types import Message
+from pyrogram.types import Message, InlineKeyboardMarkup, InlineKeyboardButton
 from pyrogram import Client
 
 from youtube_search import YoutubeSearch
@@ -18,6 +18,16 @@ logger = logging.getLogger(__name__)
 
 
 logging.getLogger("pyrogram").setLevel(logging.WARNING)
+
+
+def mrkup(i, results):
+    for num in i:
+        mar = InlineKeyboardMarkup([
+            [
+                InlineKeyboardButton(f"{num}", f"https://youtube.com{results[num]['url_suffix']}")
+            ]
+        ])
+        return mar
 
 
 @Client.on_message(command(["search"]))
@@ -38,6 +48,6 @@ async def ytsearch(_, message: Message):
             text += f"Channel - {results[i]['channel']}\n"
             text += f"https://youtube.com{results[i]['url_suffix']}\n\n"
             i += 1
-        await m.edit(text, disable_web_page_preview=True)
+        await m.edit(text, mrkup(i, results), disable_web_page_preview=True)
     except Exception as e:
         await message.reply_text(str(e))

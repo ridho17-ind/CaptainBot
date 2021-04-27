@@ -79,7 +79,6 @@ async def playlists(_, message: Message):
     msg = f"**Sedang Diputar** di {message.chat.title}"
     msg += f"\n- {now_playing}"
     msg += f"\n- Atas permintaan {by}"
-    temp.pop(0)
     if temp:
         msg += "\n\n"
         msg += "**Antrian**"
@@ -88,10 +87,13 @@ async def playlists(_, message: Message):
             usr = song[1].mention(style="md")
             msg += f"\n- {name}"
             msg += f"\n- Atas Permintaan {usr}"
+    else:
+        temp.pop(0)
     await message.reply(msg, reply_markup=InlineKeyboardMarkup(
         [
             [
-                InlineKeyboardButton("⬅ Kembali", "back")
+                InlineKeyboardButton("⬅ Kembali", "back"),
+                InlineKeyboardButton("❌ Tutup", "cls")
             ]
         ]
     ))
@@ -175,7 +177,7 @@ async def plylist_callback(_, cb):
     type_ = cb.matches[0].group(1)
     cb.message.chat
     cb.message.chat.id
-    cb.message.reply_markup.inline_keyboard[1][0].callback_data
+    cb.message.reply_markup.inline_keyboard[0][0].callback_data
     if type_ == "playlist":
         queue = que.get(cb.message.chat.id)
         if not queue:
@@ -200,7 +202,8 @@ async def plylist_callback(_, cb):
         await cb.message.edit(msg, reply_markup=InlineKeyboardMarkup(
             [
                 [
-                    InlineKeyboardButton("⬅ Kembali", "back")
+                    InlineKeyboardButton("⬅ Kembali", "back"),
+                    InlineKeyboardButton("❌ Tutup", "cls")
                 ]
             ]
         ))
@@ -260,7 +263,8 @@ async def othr_callback(_, cb):
         await cb.message.edit(msg, reply_markup=InlineKeyboardMarkup(
             [
                 [
-                    InlineKeyboardButton("⬅ Kembali", "back")
+                    InlineKeyboardButton("⬅ Kembali", "back"),
+                    InlineKeyboardButton("❌ Tutup", "cls")
                 ]
             ]
         ))
@@ -272,9 +276,9 @@ async def othr_callback(_, cb):
         queue = que.get(chat_id)
         stats = updated_stats(msg_chat, queue)
         if playing:
-            await cb.message.reply(stats, reply_markup=ply_typ("pause"))
+            await cb.message.edit(stats, reply_markup=ply_typ("pause"))
         else:
-            await cb.message.reply(stats, reply_markup=ply_typ("play"))
+            await cb.message.edit(stats, reply_markup=ply_typ("play"))
 
     elif type_ == "resume":
         if chat_id not in callsmusic.pytgcalls.active_calls:
