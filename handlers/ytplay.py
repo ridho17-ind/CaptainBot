@@ -109,7 +109,6 @@ async def generate_cover(requested_by, title, views, duration, thumbnail):
 
 @Client.on_message(command("playlist") & other_filters)
 async def playlists(_, message: Message):
-    
     queue = que.get(message.chat.id)
     if not queue:
         await message.reply("Bot musik tersedia")
@@ -317,7 +316,7 @@ async def othr_callback(_, cb):
 @errors
 async def play(_, message: Message):
     global file_path
-    
+    global que
     lel = await message.reply("🔄 **Memprosses** ...")
     admins = await get_administrators(message.chat)
     print(admins)
@@ -409,6 +408,10 @@ async def play(_, message: Message):
 
     if message.chat.id in callsmusic.pytgcalls.active_calls:
         position = await queues.put(message.chat.id, file=file_path)
+        qeue = que.get(message.chat.id)
+        loc = file_path
+        appendable = [chat_title, requested_by, loc]
+        qeue.append(appendable)
         await message.reply_photo(
             photo="final.png",
             caption=f"#⃣ Lagu yang kamu berikan antri pada posisi {position}!",
@@ -417,11 +420,16 @@ async def play(_, message: Message):
         os.remove("final.png")
         return await lel.delete()
     else:
+        que[chat_id] = []
+        qeue = que.get(message.chat.id)
+        loc = file_path
+        appendable = [chat_title, requested_by, loc]
+        qeue.append(appendable)
         callsmusic.pytgcalls.join_group_call(message.chat.id, file_path)
         await message.reply_photo(
             photo="final.png",
             reply_markup=keyboard,
-            caption=f"▶**Memutar Lagu disini**, {message.from_user.mention()} me-request {query} melalui YouTube "
+            caption=f"▶**Memutar Lagu disini**, {message.from_user.mention()} me-request {query} melalui YouTube"
                     f"Music 😜 "
         )
         os.remove("final.png")
