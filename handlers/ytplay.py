@@ -88,7 +88,13 @@ async def playlists(_, message: Message):
             usr = song[1].mention(style="md")
             msg += f"\n- {name}"
             msg += f"\n- Atas Permintaan {usr}"
-    await message.reply(msg)
+    await message.reply(msg, reply_markup=InlineKeyboardMarkup(
+        [
+            [
+                InlineKeyboardButton("⬅ Kembali", "back")
+            ]
+        ]
+    ))
 
 
 # ================================ Settings ===========================================
@@ -208,7 +214,7 @@ async def othr_callback(_, cb):
     type_ = cb.matches[0].group(1)
     chat_id = cb.message.chat.id
     msg_chat = cb.message.chat
-    the_data = cb.message.reply_markup.inline_keyboard[1][0].callback_data
+    the_data = cb.message.reply_markup.inline_keyboard[0][0].callback_data
 
     if type_ == "play":
         if chat_id not in callsmusic.pytgcalls.active_calls:
@@ -313,7 +319,7 @@ async def othr_callback(_, cb):
 
     elif type_ == "skip":
         if queue:
-            skip = queue.pop(0)
+            queue.pop(0)
         if chat_id not in callsmusic.pytgcalls.active_calls:
             await cb.answer("Bot Tidak Memutar Musik", show_alert=True)
         else:
