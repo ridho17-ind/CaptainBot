@@ -1,3 +1,5 @@
+from typing import Union, Dict
+
 import pyrogram
 
 # the logging things
@@ -20,7 +22,7 @@ logger = logging.getLogger(__name__)
 logging.getLogger("pyrogram").setLevel(logging.WARNING)
 
 
-def mrkup(i, results):
+def mrkup(i: Union[int, str], results: Union[Dict[str, int]]):
     for num in i:
         mar = InlineKeyboardMarkup([
             [
