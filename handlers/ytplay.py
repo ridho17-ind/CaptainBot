@@ -352,7 +352,7 @@ async def play(_, message: Message):
     try:
         users = await user.get_me()
     except:
-        users.first_name = "helper"
+        users.first_name = "Asisten"
     usar = users
     usid = usar.id
     try:

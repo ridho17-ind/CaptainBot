@@ -38,7 +38,7 @@ async def resume(_, message: Message):
         await message.reply_text("⏸ Melanjutkan!")
 
 
-@Client.on_message(command("leave") & other_filters)
+@Client.on_message(command("end") & other_filters)
 @errors
 @authorized_users_only
 async def stop(_, message: Message):
@@ -115,11 +115,15 @@ async def invtochnl(client: Client, message: Message):
 @Client.on_message(~filters.group & command("leavebot"))
 @errors
 @admin_only
-async def lvfromchnl(client: Client, message: Message):
+async def lvfromchnl(_, message: Message):
     chat_id = message.chat.id
     try:
         await user.leave_chat(chat_id)
         await message.reply("`Asisten berhasil keluar dari grup.`")
     except UserNotParticipant:
         await message.reply("`Asisten sudah keluar dari grup sebelumnya`.")
+        return
+    except Exception as e:
+        await message.reply("`Ada sebuah error yang ditemukan, coba kick asisten secara manual.`")
+        print(e)
         return
