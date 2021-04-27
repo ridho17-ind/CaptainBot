@@ -336,7 +336,7 @@ async def play(_, message: Message):
     usar = user
     usid = usar.id
     try:
-        await _.get_chat_member(chat_id, wew)
+        await _.get_chat_member(chat_id, usid)
     except:
         for admin in admins:
             if admin == message.from_user.id:
