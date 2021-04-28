@@ -2,6 +2,7 @@ import os
 
 # Other From Stuff
 from asyncio import QueueEmpty
+import asyncio
 from PIL import Image, ImageFont, ImageDraw
 
 # Network Stuff
@@ -71,6 +72,8 @@ async def playlists(_, message: Message):
     queue = que.get(message.chat.id)
     if not queue:
         await message.reply("Bot musik tersedia")
+        await asyncio.sleep(3)
+        await message.delete()
     temp = []
     for t in queue:
         temp.append(t)
@@ -386,8 +389,7 @@ async def play(_, message: Message):
     try:
         await user.get_chat(chat_id)
     except:
-        await lel.edit("__Bot helper tidak ada didalam grup, minta admin untuk mengirim perintah /play pada pertama "
-                       "kali atau tambahkan bot secara manual__")
+        await lel.edit("__Bot helper tidak ada didalam grup, minta admin untuk tambahkan bot secara manual__")
         return
 
     chat_title = message.chat.title

@@ -13,6 +13,7 @@ def errors(func: Callable) -> Callable:
         try:
             return await func(client, message)
         except Exception as e:
+            print(e)
             await message.reply(f"{type(e).__name__}: {e}")
 
     return decorator
@@ -38,6 +39,8 @@ def admin_only(func: Callable) -> Callable:
         for admin in admins:
             if admin == message.from_user.id:
                 return await func(client, message)
+            else:
+                return await message.reply("Kamu tidak diizinkan untuk menggunakan perintah ini")
     return decorator
 
 

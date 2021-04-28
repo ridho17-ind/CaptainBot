@@ -51,7 +51,7 @@ async def stop(_, message: Message):
             pass
 
         callsmusic.pytgcalls.leave_group_call(message.chat.id)
-        await message.reply_text("❌ Berhenti memutar!")
+        await message.reply_text("❌ Berhenti memutar!\n")
 
 
 @Client.on_message(command("skip") & other_filters)
@@ -79,7 +79,7 @@ async def skip(_, message: Message):
 @admin_only
 async def reload(_, message: Message):
     cache.admins.set(message.chat.id, [member.user for member in await message.chat.get_members(filter="administrators")])
-    await message.reply("✅ **Bot berhasil dimulai ulang!\n• Daftar admin telah diperbarui.**")
+    await message.reply("✅ **Bot berhasil dimulai ulang!\n\n• Daftar admin telah diperbarui.**")
 
 
 @Client.on_message(~filters.group & command("joinbot"))
