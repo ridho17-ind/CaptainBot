@@ -23,7 +23,7 @@ def mrkup(num, result):
     while num < 4:
         btn = InlineKeyboardButton(
             f"{num}", url=f"https://youtube.com{result[num]['url_suffix']}"
-        )
+        ),
     InlineKeyboardMarkup(
         [
             [
