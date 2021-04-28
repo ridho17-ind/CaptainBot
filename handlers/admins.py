@@ -76,14 +76,14 @@ async def skip(_, message: Message):
 
 @Client.on_message(command("reload"))
 @errors
-@admin_only
+@authorized_users_only
 async def reload(_, message: Message):
     cache.admins.set(message.chat.id, [member.user for member in await message.chat.get_members(filter="administrators")])
     await message.reply("✅ **Bot berhasil dimulai ulang!\n\n• Daftar admin telah diperbarui.**")
 
 
 @Client.on_message(~filters.group & command("joinbot"))
-@admin_only
+@authorized_users_only
 @errors
 async def invtochnl(client: Client, message: Message):
     chat_id = message.chat.id
@@ -114,7 +114,7 @@ async def invtochnl(client: Client, message: Message):
 
 @Client.on_message(~filters.group & command("leavebot"))
 @errors
-@admin_only
+@authorized_users_only
 async def lvfromchnl(_, message: Message):
     chat_id = message.chat.id
     try:
