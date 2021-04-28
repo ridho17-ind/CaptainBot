@@ -82,6 +82,7 @@ async def playlists(_, message: Message):
     msg = f"**Sedang Diputar** di {message.chat.title}"
     msg += f"\n- {now_playing}"
     msg += f"\n- Atas permintaan {by}"
+    temp.pop(0)
     if temp:
         msg += "\n\n"
         msg += "**Antrian**"
@@ -90,8 +91,6 @@ async def playlists(_, message: Message):
             usr = song[1].mention(style="md")
             msg += f"\n- {name}"
             msg += f"\n- Atas Permintaan {usr}"
-    else:
-        temp.pop(0)
     await message.reply(msg, reply_markup=InlineKeyboardMarkup(
         [
             [
@@ -273,15 +272,10 @@ async def othr_callback(_, cb):
         ))
 
     elif type_ == "back":
-        playing = None
-        if chat_id in callsmusic.pytgcalls.active_calls:
-            playing = True
+        playing = True if chat_id in callsmusic.pytgcalls.active_calls else None
         queue = que.get(chat_id)
         stats = updated_stats(msg_chat, queue)
-        if playing:
-            await cb.message.edit(stats, reply_markup=ply_typ("pause"))
-        else:
-            await cb.message.edit(stats, reply_markup=ply_typ("play"))
+        await cb.message.edit(stats, reply_markup=ply_typ("pause")) if playing else await cb.message.edit(stats, reply_markup=ply_typ ("play"))
 
     elif type_ == "resume":
         if chat_id not in callsmusic.pytgcalls.active_calls:

@@ -32,7 +32,7 @@ async def ytsearch(_, message: Message):
         text = ""
         while i < 4:
             text += f"Judul - {results[i]['title']}\n"
-            text += f"Durasi - {results[i]['duration']}\n"
+            text += f"Durasi - {results[i]['duration']} menit\n"
             text += f"Penonton - {results[i]['views']}\n"
             text += f"Channel - {results[i]['channel']}\n"
             text += f"https://youtube.com{results[i]['url_suffix']}\n\n"
@@ -40,10 +40,7 @@ async def ytsearch(_, message: Message):
         await m.edit(text, disable_web_page_preview=True, reply_markup=InlineKeyboardMarkup(
             [
                 [
-                    InlineKeyboardButton(f"1", url=f"https://youtube.com{results[0]['url_suffix']}"),
-                    InlineKeyboardButton(f"2", url=f"https://youtube.com{results[1]['url_suffix']}"),
-                    InlineKeyboardButton(f"3", url=f"https://youtube.com{results[2]['url_suffix']}"),
-                    InlineKeyboardButton(f"4", url=f"https://youtube.com{results[3]['url_suffix']}"),
+                    [InlineKeyboardButton(f"{i+1}", url=f"https://youtube.com{results[i]['url_suffix']}") for i in range(4)]
                 ]
             ]
         ))
