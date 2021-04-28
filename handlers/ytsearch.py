@@ -20,17 +20,16 @@ logging.getLogger("pyrogram").setLevel(logging.WARNING)
 
 
 def mrkup(num, result):
+    num = 0
     while num < 4:
-        btn = InlineKeyboardButton(
-            f"{num}", url=f"https://youtube.com{result[num]['url_suffix']}"
-        ),
-    InlineKeyboardMarkup(
-        [
+        mar = InlineKeyboardMarkup(
             [
-                btn
+                [
+                    InlineKeyboardButton(f"{num}", url=f"https://youtube.com{result[num]['url_suffix']}")
+                ]
             ]
-        ]
-    )
+        )
+        return mar
 
 
 @Client.on_message(command("search"))
@@ -44,13 +43,15 @@ async def ytsearch(_, message: Message):
         results = YoutubeSearch(query, max_results=4).to_dict()
         i = 0
         text = ""
+        mar = InlineKeyboardButton(f"{i}", url=f"https://youtube.com{results[i]['url_suffix']}")
         while i < 4:
             text += f"Judul - {results[i]['title']}\n"
             text += f"Durasi - {results[i]['duration']}\n"
             text += f"Penonton - {results[i]['views']}\n"
             text += f"Channel - {results[i]['channel']}\n"
             text += f"https://youtube.com{results[i]['url_suffix']}\n\n"
+            mar = InlineKeyboardButton(f"{i}", url=f"https://youtube.com{results[i]['url_suffix']}")
             i += 1
-        await m.edit(text, disable_web_page_preview=True, reply_markup=mrkup(i, results))
+        await m.edit(text, disable_web_page_preview=True, reply_markup=InlineKeyboardMarkup([[mar]]))
     except Exception as e:
         await message.reply_text(str(e))
