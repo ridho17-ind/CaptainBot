@@ -20,15 +20,20 @@ logging.getLogger("pyrogram").setLevel(logging.WARNING)
 
 
 def mrkup(num, result):
-    for x in range(0, num):
-        mar = InlineKeyboardMarkup(
+    global btn
+    while num < 4:
+        for x in range(0, num):
+            btn = InlineKeyboardButton(
+                f"{x}", url=f"https://youtube.com{result[x]['url_suffix']}"
+            ),
+    mar = InlineKeyboardMarkup(
+        [
             [
-                [
-                    InlineKeyboardButton(f"{x}", url=f"https://youtube.com{result[x]['url_suffix']}")
-                ]
+                btn
             ]
-        )
-        return mar
+        ]
+    )
+    return mar
 
 
 @Client.on_message(command("search"))
