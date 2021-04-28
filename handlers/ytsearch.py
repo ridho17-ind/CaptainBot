@@ -29,7 +29,7 @@ async def ytsearch(_, message: Message):
         m = await message.reply_text("Mencari....")
         results = YoutubeSearch(query, max_results=4).to_dict()
         i = 0
-        mar = (InlineKeyboardButton(f"{i}", url=f"https://youtube.com{results[i]['url_suffix']}"),)
+        mar = InlineKeyboardButton(f"{i}", url=f"https://youtube.com{results[i]['url_suffix']}"),
         text = ""
         while i < 4:
             text += f"{i}.  Judul - {results[i]['title']}\n"
