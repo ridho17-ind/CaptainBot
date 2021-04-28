@@ -19,7 +19,7 @@ logger = logging.getLogger(__name__)
 logging.getLogger("pyrogram").setLevel(logging.WARNING)
 
 
-def mrkup(num, result):
+def mrkup(result):
     num = 0
     while num < 4:
         mar = InlineKeyboardButton(f"{num}", url=f"https://youtube.com{result[num]['url_suffix']}")
