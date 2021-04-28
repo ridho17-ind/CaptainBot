@@ -20,8 +20,7 @@ logging.getLogger("pyrogram").setLevel(logging.WARNING)
 
 
 def mrkup(result):
-    num = 0
-    while num < 4:
+    for num in range(0, 5):
         mar = InlineKeyboardButton(f"{num}", url=f"https://youtube.com{result[num]['url_suffix']}")
         return mar
 
@@ -44,6 +43,7 @@ async def ytsearch(_, message: Message):
             text += f"Channel - {results[i]['channel']}\n"
             text += f"https://youtube.com{results[i]['url_suffix']}\n\n"
             i += 1
+        print(mrkup(results))
         await m.edit(text, disable_web_page_preview=True, reply_markup=InlineKeyboardMarkup([[mrkup(result=results)]]))
     except Exception as e:
         await message.reply_text(str(e))
