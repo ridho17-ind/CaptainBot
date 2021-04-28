@@ -342,9 +342,16 @@ async def othr_callback(_, cb):
                 await cb.message.reply(f"- Lagu Di-Skip!\n- Sekarang Memutar **{queue[0][0]}**")
 
     else:
+        queue = que.get(cb.message.chat.id)
+        if not queue:
+            pass
+        temp = []
+        for t in queue:
+            temp.append(t)
         if chat_id in callsmusic.pytgcalls.active_calls:
             try:
                 callsmusic.queues.clear(chat_id)
+                temp.pop(0)
             except QueueEmpty:
                 pass
 

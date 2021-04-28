@@ -1,5 +1,3 @@
-import pyrogram
-
 # the logging things
 
 import logging
@@ -10,6 +8,7 @@ from pyrogram import Client
 from youtube_search import YoutubeSearch
 
 from helpers.filters import command
+
 
 logging.basicConfig(
     level=logging.DEBUG, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
@@ -30,7 +29,7 @@ def mrkup(i, results):
         return mar
 
 
-@Client.on_message(command(["search"]))
+@Client.on_message(command("search"))
 async def ytsearch(_, message: Message):
     try:
         if len(message.command) < 2:

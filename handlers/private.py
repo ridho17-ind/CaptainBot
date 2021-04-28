@@ -60,7 +60,7 @@ async def ghelp(_, message: Message):
     )
 
 
-@Client.on_message(command("donate"))
+@Client.on_message(command("donasi"))
 async def donate(_, message: Message):
     await message.reply(
         f"Untuk berdonasi silahkan klik tombol ini",
