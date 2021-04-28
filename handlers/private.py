@@ -15,7 +15,7 @@ from config import STICKER_ID as SID
 from helpers.filters import other_filters2, command
 
 
-@Client.on_message(command("start") & other_filters2 & filters.group)
+@Client.on_message(command("start"))
 async def start(_, message: Message):
     await message.reply_sticker(SID)
     await message.reply_text(
@@ -39,12 +39,12 @@ kedalam grup Anda, dan nikmati mendengar musik dengan bebas!
     )
 
 
-@Client.on_message(command("online") & other_filters2 & filters.group)
+@Client.on_message(command("online"))
 async def gstart(_, message: Message):
     await message.reply_text("""**Bot Musik Online ✅**""")
 
 
-@Client.on_message(command("help") & other_filters2 & filters.group)
+@Client.on_message(command("help"))
 async def ghelp(_, message: Message):
     await message.reply(
         f"Untuk perintah silahkan klik tombol dibawah ini",
