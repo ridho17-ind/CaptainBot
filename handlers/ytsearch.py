@@ -28,9 +28,9 @@ async def ytsearch(_, message: Message):
         query = message.text.split(None, 1)[1]
         m = await message.reply_text("Mencari....")
         results = YoutubeSearch(query, max_results=4).to_dict()
-        i = 0
+        i = 1
         text = ""
-        while i < 4:
+        while i <= 4:
             text += f"{i}.  Judul - {results[i]['title']}\n"
             text += f"      Durasi - {results[i]['duration']}\n"
             text += f"      Penonton - {results[i]['views']}\n"
