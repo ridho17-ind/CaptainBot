@@ -20,7 +20,6 @@ logging.getLogger("pyrogram").setLevel(logging.WARNING)
 
 
 def mrkup(num, result):
-    global btn
     while num < 4:
         btn = InlineKeyboardButton(
             f"{num}", url=f"https://youtube.com{result[num]['url_suffix']}"
