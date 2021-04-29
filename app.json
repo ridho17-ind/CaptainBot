@@ -46,11 +46,6 @@
       "required": true,
       "value": ""
     },
-    "STICKER_ID": {
-      "description": "ID of your sticker, use @idstickerbot to get it",
-      "required": false,
-      "value": "CAACAgUAAxkBAAECNWNgf6-q6IDgxalULC64AAFosGxudMUAAsICAAKU_plXKCPliHlquSofBA"
-    },
     "GROUP_URI": {
       "description": "Your Group URL",
       "required": true,

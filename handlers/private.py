@@ -10,14 +10,11 @@ from config import USERBOT_USERNAME as USUN
 from config import GROUP_URI as GURI
 
 from config import DEV_ID as DID
-from config import STICKER_ID as SID
-
 from helpers.filters import other_filters2, command
 
 
 @Client.on_message(command("start"))
 async def start(_, message: Message):
-    await message.reply_sticker(SID)
     await message.reply_text(
         f"""Haiii {message.from_user.first_name} Saya **{BN}** 🎵\n\n
 Saya bisa memutar musik di obrolan suara grup anda. Saya dikembangkan oleh [{DNAME}](tg://user?id={str(DID)}).\n

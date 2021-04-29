@@ -32,7 +32,4 @@ COMMAND_PREFIXES = list(getenv("COMMAND_PREFIXES", "/ !").split())  # FOR COMMAN
 
 SUDO_USERS = list(map(int, getenv("SUDO_USERS").split()))  # FOR AUTHORIZED USERS
 
-STICKER_ID = getenv("STICKER_ID",
-                    "CAACAgUAAxkBAAECNWNgf6-q6IDgxalULC64AAFosGxudMUAAsICAAKU_plXKCPliHlquSofBA")  # FOR /start COMMAND
-
 GROUP_URI = getenv("GROUP_URI")  # FOR THE INLINE BUTTON

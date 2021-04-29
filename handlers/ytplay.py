@@ -69,11 +69,10 @@ async def generate_cover(requested_by, title, views, duration, thumbnail):
 
 @Client.on_message(command("playlist") & other_filters)
 async def playlists(_, message: Message):
+    global que
     queue = que.get(message.chat.id)
     if not queue:
         await message.reply("Bot musik tersedia")
-        await asyncio.sleep(3)
-        await message.delete()
     temp = []
     for t in queue:
         temp.append(t)
@@ -275,7 +274,9 @@ async def othr_callback(_, cb):
         playing = True if chat_id in callsmusic.pytgcalls.active_calls else None
         queue = que.get(chat_id)
         stats = updated_stats(msg_chat, queue)
-        await cb.message.edit(stats, reply_markup=ply_typ("pause")) if playing else await cb.message.edit(stats, reply_markup=ply_typ ("play"))
+        await cb.message.edit(stats, reply_markup=ply_typ("pause")) if playing and stats else await cb.message.edit(
+            "Tidak ada lagu yang diputar", reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton("❌ Tutup", "cls")]])
+        )
 
     elif type_ == "resume":
         if chat_id not in callsmusic.pytgcalls.active_calls:
@@ -305,7 +306,7 @@ async def othr_callback(_, cb):
                 [
                     InlineKeyboardButton('⏹', 'leave'),
                     InlineKeyboardButton('⏸', 'pause'),
-                    InlineKeyboardButton('▶️', 'resume'),
+                    InlineKeyboardButton('▶', 'resume'),
                     InlineKeyboardButton('⏭', 'skip')
                 ],
                 [
@@ -336,16 +337,9 @@ async def othr_callback(_, cb):
                 await cb.message.reply(f"- Lagu Di-Skip!\n- Sekarang Memutar **{queue[0][0]}**")
 
     else:
-        queue = que.get(cb.message.chat.id)
-        if not queue:
-            pass
-        temp = []
-        for t in queue:
-            temp.append(t)
         if chat_id in callsmusic.pytgcalls.active_calls:
             try:
                 callsmusic.queues.clear(chat_id)
-                temp.pop(0)
             except QueueEmpty:
                 pass
 
@@ -463,8 +457,7 @@ async def play(_, message: Message):
         await message.reply_photo(
             photo="final.png",
             reply_markup=keyboard,
-            caption=f"▶**Memutar Lagu disini**, {message.from_user.mention()} me-request {query} melalui YouTube"
-                    f"Music 😜 "
+            caption=f"▶**Memutar Lagu disini**, {message.from_user.mention()} me-request{query} melalui YouTube"
         )
         os.remove("final.png")
         return await lel.delete()
