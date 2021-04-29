@@ -26,7 +26,7 @@ kedalam grup Anda, dan nikmati mendengar musik dengan bebas!
                 [InlineKeyboardButton("🎛 Perintah", url="https://telegra.ph/Perintah---Captain-Music-Bot-04-25")],
                 [
                     InlineKeyboardButton("💬 Grup", url=f"{GURI}"),
-                    InlineKeyboardButton("🔊 Bot Info Channel", url="https://t.me/InfoOfAllBot")
+                    InlineKeyboardButton("🔊 Bot Info Channel", url="https://t.me/CaptainBotInfo")
                 ],
                 [InlineKeyboardButton("➕ Tambahkan Bot Kedalam Grup ➕", url=f"https://t.me/{BUN}?startgroup=true")],
                 [InlineKeyboardButton("Donasi", url="saweria.co/ShohihAbdul")]
