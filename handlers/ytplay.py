@@ -320,8 +320,6 @@ async def othr_callback(_, cb):
         await cb.message.edit(stats, reply_markup=marr)
 
     elif type_ == "skip":
-        if queue:
-            queue.pop(0)
         if chat_id not in callsmusic.pytgcalls.active_calls:
             await cb.answer("Bot Tidak Memutar Musik", show_alert=True)
         else:
@@ -333,10 +331,10 @@ async def othr_callback(_, cb):
             else:
                 callsmusic.pytgcalls.change_stream(chat_id, callsmusic.queues.get(chat_id)["file"])
                 await cb.answer("Lagu Di-Skip!")
-                await cb.message.edit((msg_chat, queue), reply_markup=ply_typ(the_data))
+                await cb.message.edit(queue, reply_markup=ply_typ(the_data))
                 await cb.message.reply(f"- Lagu Di-Skip!\n- Sekarang Memutar **{queue[0][0]}**")
 
-    else:
+    elif type_ == "leave":
         if chat_id in callsmusic.pytgcalls.active_calls:
             try:
                 callsmusic.queues.clear(chat_id)
