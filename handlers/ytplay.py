@@ -71,8 +71,8 @@ async def generate_cover(requested_by, title, views, duration, thumbnail):
 async def playlists(_, message: Message):
     global que
     queue = que.get(message.chat.id)
-    if not queue:
-        await message.reply("Bot musik tersedia")
+    stats = updated_stats(message.chat, queue)
+    playing = True if message.chat.id in callsmusic.pytgcalls.active_calls else None
     temp = []
     for t in queue:
         temp.append(t)
@@ -82,22 +82,24 @@ async def playlists(_, message: Message):
     msg += f"\n- {now_playing}"
     msg += f"\n- Atas permintaan {by}"
     temp.pop(0)
-    if temp:
-        msg += "\n\n"
-        msg += "**Antrian**"
-        for song in temp:
-            name = song[0]
-            usr = song[1].mention(style="md")
-            msg += f"\n- {name}"
-            msg += f"\n- Atas Permintaan {usr}"
-    await message.reply(msg, reply_markup=InlineKeyboardMarkup(
-        [
-            [
-                InlineKeyboardButton("⬅ Kembali", "back"),
-                InlineKeyboardButton("❌ Tutup", "cls")
-            ]
-        ]
-    ))
+    if stats:
+        if playing:
+            if temp:
+                msg += "\n\n"
+                msg += "**Dalam Antrian**"
+                for song in temp:
+                    name = song[0]
+                    usr = song[1].mention(style="md")
+                    msg += f"\n- {name}"
+                    msg += f"\n- Atas Permintaan {usr}"
+            await message.reply(msg, reply_markup=InlineKeyboardMarkup(
+                [[InlineKeyboardButton("⬅ Kembali", "back"),
+                  InlineKeyboardButton("❌ Tutup", "cls")]]
+            ))
+    else:
+        await message.reply("Tidak ada lagu yang diputar saat ini", reply_markup=InlineKeyboardMarkup(
+            [[InlineKeyboardButton("❌ Tutup", "cls")]]
+        ))
 
 
 # ================================ Settings ===========================================
@@ -181,8 +183,8 @@ async def plylist_callback(_, cb):
     cb.message.reply_markup.inline_keyboard[0][0].callback_data
     if type_ == "playlist":
         queue = que.get(cb.message.chat.id)
-        if not queue:
-            await cb.message.edit("Bot bisa digunakan")
+        playing = True if cb.message.id in callsmusic.pytgcalls.active_calls else None
+        stats = updated_stats(cb.message.chat, queue)
         temp = []
         for t in queue:
             temp.append(t)
@@ -192,22 +194,24 @@ async def plylist_callback(_, cb):
         msg += f"\n- {now_playing}"
         msg += f"\n- Atas Permintaan {by}"
         temp.pop(0)
-        if temp:
-            msg += "\n\n"
-            msg += "**Dalam Antrian**"
-            for song in temp:
-                name = song[0]
-                usr = song[1].mention(style="md")
-                msg += f"\n- {name}"
-                msg += f"\n- Atas Permintaan{usr}"
-        await cb.message.edit(msg, reply_markup=InlineKeyboardMarkup(
-            [
-                [
-                    InlineKeyboardButton("⬅ Kembali", "back"),
-                    InlineKeyboardButton("❌ Tutup", "cls")
-                ]
-            ]
-        ))
+        if stats:
+            if playing:
+                if temp:
+                    msg += "\n\n"
+                    msg += "**Dalam Antrian**"
+                    for song in temp:
+                        name = song[0]
+                        usr = song[1].mention(style="md")
+                        msg += f"\n- {name}"
+                        msg += f"\n- Atas Permintaan{usr}"
+                await cb.message.edit(msg, reply_markup=InlineKeyboardMarkup(
+                    [[InlineKeyboardButton("⬅ Kembali", "back"),
+                      InlineKeyboardButton("❌ Tutup", "cls")]]
+                ))
+        else:
+            await cb.message.edit("Tidak ada lagu yang diputar saat ini", reply_markup=InlineKeyboardMarkup(
+                [[InlineKeyboardButton("❌ Tutup", "cls")]]
+            ))
 
 
 @Client.on_callback_query(filters.regex(pattern=r"^(play|pause|skip|leave|puse|resume|menu|cls|back)$"))
@@ -242,8 +246,8 @@ async def othr_callback(_, cb):
 
     elif type_ == "playlist":
         queue = que.get(cb.message.chat.id)
-        if not queue:
-            await cb.message.edit("Bot bisa digunakan")
+        playing = True if chat_id in callsmusic.pytgcalls.active_calls else None
+        stats = updated_stats(msg_chat, queue)
         temp = []
         for t in queue:
             temp.append(t)
@@ -253,22 +257,24 @@ async def othr_callback(_, cb):
         msg += f"\n- {now_playing}"
         msg += f"\n- Atas Permintaan {by}"
         temp.pop(0)
-        if temp:
-            msg += "\n\n"
-            msg += "**Dalam Antrian**"
-            for song in temp:
-                name = song[0]
-                usr = song[1].mention(style="md")
-                msg += f"\n- {name}"
-                msg += f"\n- Atas Permintaan{usr}"
-        await cb.message.edit(msg, reply_markup=InlineKeyboardMarkup(
-            [
-                [
-                    InlineKeyboardButton("⬅ Kembali", "back"),
-                    InlineKeyboardButton("❌ Tutup", "cls")
-                ]
-            ]
-        ))
+        if stats:
+            if playing:
+                if temp:
+                    msg += "\n\n"
+                    msg += "**Dalam Antrian**"
+                    for song in temp:
+                        name = song[0]
+                        usr = song[1].mention(style="md")
+                        msg += f"\n- {name}"
+                        msg += f"\n- Atas Permintaan{usr}"
+                await cb.message.edit(msg, reply_markup=InlineKeyboardMarkup(
+                    [[InlineKeyboardButton("⬅ Kembali", "back"),
+                      InlineKeyboardButton("❌ Tutup", "cls")]]
+                ))
+        else:
+            await cb.message.edit("Tidak ada lagu yang diputar saat ini", reply_markup=InlineKeyboardMarkup(
+                [[InlineKeyboardButton("❌ Tutup", "cls")]]
+            ))
 
     elif type_ == "back":
         playing = True if chat_id in callsmusic.pytgcalls.active_calls else None
@@ -334,7 +340,7 @@ async def othr_callback(_, cb):
                 await cb.message.edit(queue, reply_markup=ply_typ(the_data))
                 await cb.message.reply(f"- Lagu Di-Skip!\n- Sekarang Memutar **{queue[0][0]}**")
 
-    elif type_ == "leave":
+    else:
         if chat_id in callsmusic.pytgcalls.active_calls:
             try:
                 callsmusic.queues.clear(chat_id)
