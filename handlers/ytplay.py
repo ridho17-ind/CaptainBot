@@ -75,7 +75,10 @@ async def playlists(_, message: Message):
     playing = True if message.chat.id in callsmusic.pytgcalls.active_calls else None
     temp = []
     for t in queue:
-        temp.append(t)
+        if t is not None:
+            temp.append(t)
+        else:
+            pass
     now_playing = temp[0][0]
     by = temp[0][1].mention(style="md")
     msg = f"**Sedang Diputar** di {message.chat.title}"

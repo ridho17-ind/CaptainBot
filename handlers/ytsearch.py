@@ -21,6 +21,8 @@ logging.getLogger("pyrogram").setLevel(logging.WARNING)
 
 @Client.on_message(command("search"))
 async def ytsearch(_, message: Message):
+    if filters.private:
+        await message.reply("Gunakan ini hanya dalam grup")
     try:
         if len(message.command) < 2:
             await message.reply(
