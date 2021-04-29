@@ -23,7 +23,12 @@ logging.getLogger("pyrogram").setLevel(logging.WARNING)
 async def ytsearch(_, message: Message):
     try:
         if len(message.command) < 2:
-            await message.reply_text("/search membutuhkan argumen!")
+            await message.reply(
+                "Jika anda ingin mencari via inline, tekan tombol Cari di Youtube atau ketikan /search + nama lagu",
+                reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton(
+                    "Cari di Youtube", switch_inline_query_current_chat=""
+                )]])
+            )
             return
         query = message.text.split(None, 1)[1]
         m = await message.reply_text("Mencari....")
