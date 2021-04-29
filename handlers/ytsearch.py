@@ -39,9 +39,7 @@ async def ytsearch(_, message: Message):
             i += 1
         await m.edit(text, disable_web_page_preview=True, reply_markup=InlineKeyboardMarkup(
             [
-                [
-                    [InlineKeyboardButton(f"{i+1}", url=f"https://youtube.com{results[i]['url_suffix']}") for i in range(4)]
-                ]
+                [InlineKeyboardButton(f"{i+1}", url=f"https://youtube.com{results[i]['url_suffix']}") for i in range(4)]
             ]
         ))
     except Exception as e:
