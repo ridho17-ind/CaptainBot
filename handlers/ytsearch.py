@@ -31,11 +31,11 @@ async def ytsearch(_, message: Message):
         i = 0
         text = ""
         while i < 4:
-            text += f"Judul - {results[i]['title']}\n"
-            text += f"Durasi - {results[i]['duration']} menit\n"
-            text += f"Penonton - {results[i]['views']}\n"
-            text += f"Channel - {results[i]['channel']}\n"
-            text += f"https://youtube.com{results[i]['url_suffix']}\n\n"
+            text += f"{i+1} Judul - {results[i]['title']}\n"
+            text += f"      Durasi - {results[i]['duration']} menit\n"
+            text += f"      Penonton - {results[i]['views']}\n"
+            text += f"      Channel - {results[i]['channel']}\n"
+            text += f"      https://youtube.com{results[i]['url_suffix']}\n\n"
             i += 1
         await m.edit(text, disable_web_page_preview=True, reply_markup=InlineKeyboardMarkup(
             [
