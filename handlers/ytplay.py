@@ -113,7 +113,7 @@ def updated_stats(chat, queue, vol=100):
     Function to update stats in active voice chats
     """
     if chat.id in callsmusic.pytgcalls.active_calls:
-        stats = 'Pengaturan dari **{}**'.format(chat.title)
+        stats = f'Pengaturan dari **{chat.title}**'
         if len(que) > 0:
             stats += '\n\n'
             stats += f'Volume : {vol}%\n'
@@ -156,7 +156,7 @@ async def currents(_, message: Message):
     if stats:
         await message.reply(stats)
     else:
-        await message.reply("Tidak ada obrolan suara yang berjalan di grup ini")
+        await message.reply("Tidak ada lagu yang diputar di grup ini")
 
 
 @Client.on_message(command("player") & other_filters)
@@ -173,7 +173,7 @@ async def player(_, message: Message):
         else:
             await message.reply(stats, reply_markup=ply_typ("play"))
     else:
-        await message.reply("Tidak ada Obrolan suara yang berjalan disini")
+        await message.reply("Tidak ada lagu yang diputar di grup ini")
 
 
 @Client.on_callback_query(filters.regex(pattern=r'^(playlist)$'))
@@ -181,16 +181,16 @@ async def plylist_callback(_, cb):
     global que
     que.get(cb.message.chat.id)
     type_ = cb.matches[0].group(1)
-    cb.message.chat
-    cb.message.chat.id
-    cb.message.reply_markup.inline_keyboard[0][0].callback_data
     if type_ == "playlist":
         queue = que.get(cb.message.chat.id)
-        playing = True if cb.message.id in callsmusic.pytgcalls.active_calls else None
         stats = updated_stats(cb.message.chat, queue)
+        playing = True if cb.message.chat.id in callsmusic.pytgcalls.active_calls else None
         temp = []
         for t in queue:
-            temp.append(t)
+            if t is not None:
+                temp.append(t)
+            else:
+                pass
         now_playing = temp[0][0]
         by = temp[0][1].mention(style="md")
         msg = f"**Sedang Diputar** di {cb.message.chat.title}"
@@ -432,6 +432,7 @@ async def play(_, message: Message):
         ]
     )
     requested_by = message.from_user.first_name
+    print(requested_by)
     await generate_cover(requested_by, title, views, duration, thumbnail)
     file_path = await convert(youtube.download(url))
 
