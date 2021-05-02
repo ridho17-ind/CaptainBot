@@ -1,6 +1,6 @@
 ![Code Grade](https://www.code-inspector.com/project/21896/status/svg)
 
-<h2 align="centre">Captain Music Bot 🎵</h2>
+<h2 align="centre">👑Legend Music Bot👑</h2>
 
 <p align="center">
   <img src="https://telegra.ph/file/fa8ae7cdd1651f4709578.jpg">
